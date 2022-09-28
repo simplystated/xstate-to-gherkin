@@ -24,8 +24,10 @@
   },
   "homepage": "https://github.com/simplystated/xstate-to-gherkin#readme",
   "files": [
-    "dist"
+    "dist",
+    "package.json"
   ],
+  "bin": "./bin/cli.js",
   "devDependencies": {
     "@cucumber/gherkin": "^24.0.0",
     "@cucumber/messages": "^19.1.4",
@@ -37,6 +39,8 @@
   },
   "dependencies": {
     "@xstate/graph": "^1.4.2",
+    "@xstate/machine-extractor": "^0.7.1",
+    "arg": "^5.0.2",
     "xstate": "^4.33.6"
   }
 }
