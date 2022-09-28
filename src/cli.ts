@@ -99,7 +99,6 @@ const main = (outputDir: string, inputPath: string, selectedMachine: string | nu
         return 1;
     }
 
-    console.log(JSON.stringify(machineConfig, null, 2));
     const scriptsByName = toGherkinScripts(xstateToGherkin(createMachine({ ...machineConfig, predictableActionArguments: true })));
     for (const [filename, script] of scriptsByName.entries()) {
         const filePath = path.join(outputDir, filename);

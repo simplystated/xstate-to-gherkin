@@ -1,0 +1,62 @@
+diff --git a/node_modules/@xstate/machine-extractor/dist/xstate-machine-extractor.cjs.dev.js b/node_modules/@xstate/machine-extractor/dist/xstate-machine-extractor.cjs.dev.js
+index 328a049..7014100 100644
+--- a/node_modules/@xstate/machine-extractor/dist/xstate-machine-extractor.cjs.dev.js
++++ b/node_modules/@xstate/machine-extractor/dist/xstate-machine-extractor.cjs.dev.js
+@@ -1035,7 +1035,10 @@ const Invoke = maybeArrayOf(InvokeConfigObject);
+ 
+ const MetaDescription = unionType([StringLiteral, TemplateLiteral]);
+ const StateMeta = objectTypeWithKnownKeys({
+-  description: MetaDescription
++  description: MetaDescription,
++  gherkinFeature: MetaDescription,
++  gherkinAssert: MetaDescription,
++  gherkinScenario: MetaDescription,
+ });
+ 
+ const Schema = objectTypeWithKnownKeys({
+@@ -1214,9 +1217,12 @@ const parseStateNode = (astResult, opts) => {
+     config.always = getTransitions(astResult.always, opts);
+   }
+ 
+-  if ((_astResult$meta = astResult.meta) !== null && _astResult$meta !== void 0 && _astResult$meta.description) {
++  if ((_astResult$meta = astResult.meta) !== null && _astResult$meta !== void 0) {
+     config.meta = {
+-      description: astResult.meta.description.value
++      description: astResult.meta.description && astResult.meta.description.value,
++      gherkinAssert: astResult.meta.gherkinAssert && astResult.meta.gherkinAssert.value,
++      gherkinScenario: astResult.meta.gherkinScenario && astResult.meta.gherkinScenario.value,
++      gherkinFeature: astResult.meta.gherkinFeature && astResult.meta.gherkinFeature.value
+     };
+   }
+ 
+diff --git a/node_modules/@xstate/machine-extractor/dist/xstate-machine-extractor.cjs.prod.js b/node_modules/@xstate/machine-extractor/dist/xstate-machine-extractor.cjs.prod.js
+index 328a049..7014100 100644
+--- a/node_modules/@xstate/machine-extractor/dist/xstate-machine-extractor.cjs.prod.js
++++ b/node_modules/@xstate/machine-extractor/dist/xstate-machine-extractor.cjs.prod.js
+@@ -1035,7 +1035,10 @@ const Invoke = maybeArrayOf(InvokeConfigObject);
+ 
+ const MetaDescription = unionType([StringLiteral, TemplateLiteral]);
+ const StateMeta = objectTypeWithKnownKeys({
+-  description: MetaDescription
++  description: MetaDescription,
++  gherkinFeature: MetaDescription,
++  gherkinAssert: MetaDescription,
++  gherkinScenario: MetaDescription,
+ });
+ 
+ const Schema = objectTypeWithKnownKeys({
+@@ -1214,9 +1217,12 @@ const parseStateNode = (astResult, opts) => {
+     config.always = getTransitions(astResult.always, opts);
+   }
+ 
+-  if ((_astResult$meta = astResult.meta) !== null && _astResult$meta !== void 0 && _astResult$meta.description) {
++  if ((_astResult$meta = astResult.meta) !== null && _astResult$meta !== void 0) {
+     config.meta = {
+-      description: astResult.meta.description.value
++      description: astResult.meta.description && astResult.meta.description.value,
++      gherkinAssert: astResult.meta.gherkinAssert && astResult.meta.gherkinAssert.value,
++      gherkinScenario: astResult.meta.gherkinScenario && astResult.meta.gherkinScenario.value,
++      gherkinFeature: astResult.meta.gherkinFeature && astResult.meta.gherkinFeature.value
+     };
+   }
+ 

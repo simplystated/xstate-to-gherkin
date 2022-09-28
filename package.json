@@ -8,7 +8,8 @@
     "test": "jest",
     "build": "tsc",
     "update-snapshots": "jest --updateSnapshot",
-    "prettier": "prettier --write '{src,test}/**/*.{ts,js,yaml,yml,json}'"
+    "prettier": "prettier --write '{src,test}/**/*.{ts,js,yaml,yml,json}'",
+    "postinstall": "patch-package"
   },
   "repository": {
     "type": "git",
@@ -41,6 +42,9 @@
     "@xstate/graph": "^1.4.2",
     "@xstate/machine-extractor": "^0.7.1",
     "arg": "^5.0.2",
+    "install": "^0.13.0",
+    "npm": "^8.19.2",
+    "patch-package": "^6.4.7",
     "xstate": "^4.33.6"
   }
 }
