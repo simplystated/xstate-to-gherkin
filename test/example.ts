@@ -1,5 +1,5 @@
 import { createMachine } from "xstate";
-import { xstateToGherkin } from "../src";
+import { toGherkinScripts, xstateToGherkin } from "../src";
 
 const basicWithConditions = createMachine({
   predictableActionArguments: true,
@@ -50,5 +50,13 @@ const basicWithConditions = createMachine({
 describe("xstate to gherkin", () => {
   it("works for a basic example with conditions", () => {
     expect(xstateToGherkin(basicWithConditions)).toMatchSnapshot();
+  });
+});
+
+describe("xstate to gherkin script", () => {
+  it("works for a basic example with conditions", () => {
+    expect(
+      toGherkinScripts(xstateToGherkin(basicWithConditions))
+    ).toMatchSnapshot();
   });
 });

@@ -12,6 +12,16 @@ import {
 type AnyMachine = StateMachine<any, any, any>;
 type AnyState = StateNodeDefinition<any, any, any>;
 
+export const toGherkinScripts = (
+  features: Array<GherkinFeature>
+): Map<string, string> =>
+  features.reduce((filenamesToScripts, gherkinFeature) => {
+    const filename = toFilename(gherkinFeature.feature) + ".feature";
+    const contents = featureToScript(gherkinFeature);
+    filenamesToScripts.set(filename, contents);
+    return filenamesToScripts;
+  }, new Map());
+
 export const xstateToGherkin = (machine: AnyMachine): Array<GherkinFeature> => {
   const canonicalDefn = machine.definition;
   const flattened = flattenConds(canonicalDefn);
@@ -60,6 +70,28 @@ export const xstateToGherkin = (machine: AnyMachine): Array<GherkinFeature> => {
     .filter((feature) => feature.steps.length > 0);
   return flattenedStepsToScenarios(flattenedSteps);
 };
+
+const toFilename = (s: string): string =>
+  s.toLowerCase().replace(/[^a-zA-Z0-9_]+/g, "-");
+
+const featureToScript = (feature: GherkinFeature): string => {
+  const script = `Feature: ${feature.feature}`;
+  const featuresScript = feature.scenarios
+    .map((scenario) => {
+      const scenarioHeader = `Scenario: ${scenario.scenario}`;
+      const steps = scenario.steps.map(
+        (step) => `${step.keyword} ${step.step}`
+      );
+      return [indent(2, scenarioHeader)]
+        .concat(steps.map(indent.bind(null, 4)))
+        .join("\n");
+    })
+    .join("\n\n");
+  return [script, featuresScript].join("\n\n");
+};
+
+const indent = (spaces: number, s: string): string =>
+  new Array(spaces + 1).join(" ") + s;
 
 const flattenedStepsToScenarios = (
   flattenedSteps: Array<GherkinStepsWithFeatureAndScenario>
