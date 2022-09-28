@@ -2,37 +2,48 @@
 
 exports[`xstate to gherkin works for a basic example with conditions 1`] = `
 [
-  [
-    {
-      "keyword": "Given",
-      "step": "I can see the start page",
-    },
-    {
-      "keyword": "When",
-      "step": "I tap the next button with good input",
-    },
-    {
-      "keyword": "Then",
-      "step": "I can see the success page",
-    },
-    {
-      "keyword": "And",
-      "step": "I see the first step of the success page",
-    },
-  ],
-  [
-    {
-      "keyword": "Given",
-      "step": "I can see the start page",
-    },
-    {
-      "keyword": "When",
-      "step": "I tap the next button with bad input",
-    },
-    {
-      "keyword": "Then",
-      "step": "I see the failure page",
-    },
-  ],
+  {
+    "feature": "My Feature",
+    "scenarios": [
+      {
+        "scenario": "Success",
+        "steps": [
+          {
+            "keyword": "Given",
+            "step": "I can see the start page",
+          },
+          {
+            "keyword": "When",
+            "step": "I tap the next button with good input",
+          },
+          {
+            "keyword": "Then",
+            "step": "I can see the success page",
+          },
+          {
+            "keyword": "And",
+            "step": "I see the first step of the success page",
+          },
+        ],
+      },
+      {
+        "scenario": "Failure",
+        "steps": [
+          {
+            "keyword": "Given",
+            "step": "I can see the start page",
+          },
+          {
+            "keyword": "When",
+            "step": "I tap the next button with bad input",
+          },
+          {
+            "keyword": "Then",
+            "step": "I see the failure page",
+          },
+        ],
+      },
+    ],
+  },
 ]
 `;

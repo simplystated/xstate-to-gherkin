@@ -5,6 +5,7 @@
   "main": "dist/index.js",
   "scripts": {
     "test": "jest",
+    "update-snapshots": "jest --updateSnapshot",
     "prettier": "prettier --write '{src,test}/**/*.{ts,js,yaml,yml,json}'"
   },
   "repository": {

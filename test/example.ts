@@ -9,6 +9,7 @@ const basicWithConditions = createMachine({
     start: {
       meta: {
         gherkinAssert: "I can see the start page",
+        gherkinFeature: "My Feature",
       },
       on: {
         "I tap the next button": [
@@ -26,6 +27,7 @@ const basicWithConditions = createMachine({
     success: {
       meta: {
         gherkinAssert: "I can see the success page",
+        gherkinScenario: "Success",
       },
       initial: "successStep1",
       states: {
@@ -39,6 +41,7 @@ const basicWithConditions = createMachine({
     failure: {
       meta: {
         gherkinAssert: "I see the failure page",
+        gherkinScenario: "Failure",
       },
     },
   },
