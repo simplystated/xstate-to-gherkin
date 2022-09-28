@@ -46,7 +46,7 @@ export const xstateToGherkin = (machine: AnyMachine): Array<GherkinFeature> => {
             return scenarios;
           }, new Set<string>())
         );
-        const scenario = gherkinScenariosFromState(path.state).join(" & ");
+        const scenarios = gherkinScenariosFromState(path.state);
         const steps = path.segments.flatMap((segment, idx) => {
           const gherkinStepsForState = gherkinStepsFromState(
             segment.state,
@@ -60,8 +60,8 @@ export const xstateToGherkin = (machine: AnyMachine): Array<GherkinFeature> => {
             );
         });
         return {
-          feature: Array.from(features).join(" & "),
-          scenario,
+          feature: features.size> 0 ? Array.from(features).join(" & ") : "Default Feature",
+          scenario: scenarios.length > 0 ? scenarios.join(" & ") : "Default Scenario",
           disambiguatingScenarios,
           steps,
         };
