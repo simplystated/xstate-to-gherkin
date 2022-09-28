@@ -1,4 +1,10 @@
 import { createMachine } from "xstate";
+import {
+  AstBuilder,
+  GherkinClassicTokenMatcher,
+  Parser,
+} from "@cucumber/gherkin";
+import { IdGenerator } from "@cucumber/messages";
 import { toGherkinScripts, xstateToGherkin } from "../src";
 
 const basicWithConditions = createMachine({
@@ -55,8 +61,21 @@ describe("xstate to gherkin", () => {
 
 describe("xstate to gherkin script", () => {
   it("works for a basic example with conditions", () => {
-    expect(
-      toGherkinScripts(xstateToGherkin(basicWithConditions))
-    ).toMatchSnapshot();
+    const scripts = toGherkinScripts(xstateToGherkin(basicWithConditions));
+
+    const parser = gherkinParser();
+    scripts.forEach((script) => {
+      expect(parser.parse(script).feature?.name).toEqual("My Feature");
+    });
+
+    expect(scripts).toMatchSnapshot();
   });
 });
+
+const gherkinParser = () => {
+  const uuidFn = IdGenerator.uuid();
+  const builder = new AstBuilder(uuidFn);
+  const matcher = new GherkinClassicTokenMatcher();
+
+  return new Parser(builder, matcher);
+};
