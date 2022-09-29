@@ -13,6 +13,25 @@ type AnyMachine = StateMachine<any, any, any>;
 type AnyState = StateNodeDefinition<any, any, any>;
 type AnyStateConfig = StateNodeConfig<any, any, any>;
 
+/**
+ * Generate a set of gherkin feature files by walking all simple paths in `machine`.
+ *
+ * @param machine xstate machine, annotated with states additional metadata (gherkinAssert, gherkinFeature, gherkinScenario).
+ * meta.gherkinAssert should be a string that describes some assertion that should hold in that state.
+ * meta.gherkinFeature should be a string that describes the feature that the state is a part of.
+ * meta.gherkinScenario should be a string that describes the scenario that the state is a part of.
+ * @returns a Map from string filenames (e.g. my-feature.feature) to the gherkin-formatted content of those files. No filesystem operations are performed.
+ */
+export const xstateToGherkinScripts = (
+  machine: AnyMachine
+): Map<string, string> => toGherkinScripts(xstateToGherkin(machine));
+
+/**
+ * Transform an array of `GherkinFeature`s into a Map from filenames to gherkin scripts.
+ *
+ * @param features An array of `GherkinFeature`s, as returned by `xstateToGherkin`.
+ * @returns a Map from string filenames (e.g. my-feature.feature) to the gherkin-formatted content of those files. No filesystem operations are performed.
+ */
 export const toGherkinScripts = (
   features: Array<GherkinFeature>
 ): Map<string, string> =>
@@ -23,6 +42,16 @@ export const toGherkinScripts = (
     return filenamesToScripts;
   }, new Map());
 
+/**
+ * Transform an xstate machine into an array of `GherkinFeature`s, with one or more scenarios, each describing a test case.
+ * A test case is generated for each simple path through the states of the machine.
+ *
+ * @param machine xstate machine, annotated with states additional metadata (gherkinAssert, gherkinFeature, gherkinScenario).
+ * meta.gherkinAssert should be a string that describes some assertion that should hold in that state.
+ * meta.gherkinFeature should be a string that describes the feature that the state is a part of.
+ * meta.gherkinScenario should be a string that describes the scenario that the state is a part of.
+ * @returns an array of `GherkinFeature`s.
+ */
 export const xstateToGherkin = (machine: AnyMachine): Array<GherkinFeature> => {
   const canonicalDefn = machine.definition;
   const flattened = fixupStateDefinition(flattenConds(canonicalDefn));
@@ -146,16 +175,25 @@ interface GherkinStepsWithFeatureAndScenario {
   steps: Array<GherkinStep>;
 }
 
+/**
+ * Represents a gherkin feature, which is named and has one or more scenarios.
+ */
 export interface GherkinFeature {
   feature: string;
   scenarios: Array<GherkinScenario>;
 }
 
+/**
+ * Represents a gherkin scenario, which is named and has one or more steps.
+ */
 export interface GherkinScenario {
   scenario: string;
   steps: Array<GherkinStep>;
 }
 
+/**
+ * Represents a gherkin step (given, when, then, etc.).
+ */
 export interface GherkinStep {
   keyword: "Given" | "Then" | "And" | "When";
   step: string;
