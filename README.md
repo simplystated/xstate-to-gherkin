@@ -4,6 +4,8 @@ xstate-to-gherkin is a library and cli tool to generate [Gherkin](https://cucumb
 
 # Quickstart
 
+**Check out a codesandbox demo [here](https://codesandbox.io/s/simply-stated-xstate-to-gherkin-shdqv2) to play with xstate-to-gherkin from your browser.**
+
 You'll need to have an xstate [machine definition](https://xstate.js.org/docs/guides/machines.html).
 xstate-to-gherkin requires you to annotate your machine with a few additional pieces of metadata.
 On any state you would like to make an assertion for, set `meta.gherkinAssert` to a string describing what should be true in that state.
