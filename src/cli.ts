@@ -1,4 +1,3 @@
-import * as meta from "@xstate/machine-extractor/src/"
 import * as arg from "arg";
 import { existsSync, readFileSync, writeFileSync } from "fs";
 import { createMachine } from "xstate";
@@ -23,37 +22,41 @@ export const run = (argv: Array<string>): number => {
       "-f": "--force",
     },
     {
-        stopAtPositional: true,
-        argv
+      stopAtPositional: true,
+      argv,
     }
   );
 
-  if ( args["--help"] ) {
+  if (args["--help"]) {
     usage();
     return 0;
   }
 
-  if ( args["--version"] ) {
-    const packagejson = JSON.parse(readFileSync(path.join(__dirname, "..", "package.json"), "utf8"));
+  if (args["--version"]) {
+    const packagejson = JSON.parse(
+      readFileSync(path.join(__dirname, "..", "package.json"), "utf8")
+    );
     console.log(`
         xstate-to-gherkin v${packagejson.version}
-    `)
+    `);
     return 0;
   }
 
   const outputDir = args["--output-dir"];
-  const positionalArgs = args["_"]
+  const positionalArgs = args["_"];
   const selectedMachine = args["--machine"];
   const force = !!args["--force"];
 
-  if ( !outputDir ) {
+  if (!outputDir) {
     console.error("--output-dir is required");
     usage();
     return 1;
   }
 
-  if ( !positionalArgs || positionalArgs.length !== 1 ) {
-    console.error("path to js/ts file is required (pass it after all other arguments)");
+  if (!positionalArgs || positionalArgs.length !== 1) {
+    console.error(
+      "path to js/ts file is required (pass it after all other arguments)"
+    );
     usage();
     return 1;
   }
@@ -62,7 +65,7 @@ export const run = (argv: Array<string>): number => {
 };
 
 const usage = () => {
-    console.log(`
+  console.log(`
         xstate-to-gherkin converts annotated xstate statecharts into gherkin test scripts.
 
         Usage:
@@ -79,35 +82,54 @@ const usage = () => {
             gherkinScenario - (optional) specifies the scenario this state is a part of
             gherkinAssert - specifies the assertion that should hold in this state
     `);
-}
+};
 
-const main = (outputDir: string, inputPath: string, selectedMachine: string | null, force: boolean): number => {
-    const js = readFileSync(inputPath, "utf8");
-    const machines = parseMachinesFromFile(js);
-    const machineConfigs = machines.machines.map(m => m.toConfig());
-    if ( machineConfigs.length > 1 && !selectedMachine) {
-        console.error(`multiple machines found at ${inputPath}. specify --machine to select one.`);
-        return 1;
+const main = (
+  outputDir: string,
+  inputPath: string,
+  selectedMachine: string | null,
+  force: boolean
+): number => {
+  const js = readFileSync(inputPath, "utf8");
+  const machines = parseMachinesFromFile(js);
+  const machineConfigs = machines.machines.map((m) => m.toConfig());
+  if (machineConfigs.length > 1 && !selectedMachine) {
+    console.error(
+      `multiple machines found at ${inputPath}. specify --machine to select one.`
+    );
+    return 1;
+  }
+  const machineConfig = selectedMachine
+    ? machineConfigs.filter((c) => c?.id === selectedMachine)[0]
+    : machineConfigs[0];
+  if (!machineConfig) {
+    if (selectedMachine) {
+      console.error(
+        `no machine named ${selectedMachine} found in ${inputPath}. found machines: [${machineConfigs
+          .map((m) => m?.id)
+          .join(", ")}].`
+      );
+    } else {
+      console.error(`no machines found in ${inputPath}.`);
     }
-    const machineConfig = selectedMachine ? machineConfigs.filter(c => c?.id === selectedMachine)[0] : machineConfigs[0];
-    if ( !machineConfig ) {
-        if ( selectedMachine ) {
-            console.error(`no machine named ${selectedMachine} found in ${inputPath}. found machines: [${machineConfigs.map(m => m?.id).join(", ")}].`)
-        } else {
-            console.error(`no machines found in ${inputPath}.`);
-        }
-        return 1;
-    }
+    return 1;
+  }
 
-    const scriptsByName = toGherkinScripts(xstateToGherkin(createMachine({ ...machineConfig, predictableActionArguments: true })));
-    for (const [filename, script] of scriptsByName.entries()) {
-        const filePath = path.join(outputDir, filename);
-        if ( !force && existsSync(filePath) ) {
-            console.error(`refusing to overwrite existing file ${filePath}. pass --force to overwrite.`);
-            return 1;
-        }
-        writeFileSync(path.join(outputDir, filename), script, { encoding: "utf8" });
+  const scriptsByName = toGherkinScripts(
+    xstateToGherkin(
+      createMachine({ ...machineConfig, predictableActionArguments: true })
+    )
+  );
+  for (const [filename, script] of scriptsByName.entries()) {
+    const filePath = path.join(outputDir, filename);
+    if (!force && existsSync(filePath)) {
+      console.error(
+        `refusing to overwrite existing file ${filePath}. pass --force to overwrite.`
+      );
+      return 1;
     }
+    writeFileSync(path.join(outputDir, filename), script, { encoding: "utf8" });
+  }
 
-    return 0;
+  return 0;
 };
