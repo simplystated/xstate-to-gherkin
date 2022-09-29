@@ -53,9 +53,51 @@ const basicWithConditions = createMachine({
   },
 });
 
+const basicWithTransientTransitions = createMachine({
+  predictableActionArguments: true,
+  id: "basicWithTransientTransitions",
+  initial: "start",
+  states: {
+    start: {
+      meta: {
+        gherkinAssert: "I can see the start page",
+        gherkinFeature: "My Feature",
+      },
+      always: [
+        { target: "success", cond: "good input" },
+        { target: "failure", cond: "bad input" },
+      ],
+    },
+    success: {
+      meta: {
+        gherkinAssert: "I can see the success page",
+        gherkinScenario: "Success",
+      },
+      initial: "successStep1",
+      states: {
+        successStep1: {
+          meta: {
+            gherkinAssert: "I see the first step of the success page",
+          },
+        },
+      },
+    },
+    failure: {
+      meta: {
+        gherkinAssert: "I see the failure page",
+        gherkinScenario: "Failure",
+      },
+    },
+  },
+});
+
 describe("xstate to gherkin", () => {
   it("works for a basic example with conditions", () => {
     expect(xstateToGherkin(basicWithConditions)).toMatchSnapshot();
+  });
+
+  it("works for a basic example with transient transitions", () => {
+    expect(xstateToGherkin(basicWithTransientTransitions)).toMatchSnapshot();
   });
 });
 

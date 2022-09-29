@@ -1,16 +1,17 @@
-import { getSimplePaths, StatePath } from "@xstate/graph";
+import { getSimplePaths } from "@xstate/graph";
 import {
   AnyEventObject,
   createMachine,
-  Segment,
   State,
   StateMachine,
   StateNode,
+  StateNodeConfig,
   StateNodeDefinition,
 } from "xstate";
 
 type AnyMachine = StateMachine<any, any, any>;
 type AnyState = StateNodeDefinition<any, any, any>;
+type AnyStateConfig = StateNodeConfig<any, any, any>;
 
 export const toGherkinScripts = (
   features: Array<GherkinFeature>
@@ -24,7 +25,7 @@ export const toGherkinScripts = (
 
 export const xstateToGherkin = (machine: AnyMachine): Array<GherkinFeature> => {
   const canonicalDefn = machine.definition;
-  const flattened = flattenConds(canonicalDefn);
+  const flattened = fixupStateDefinition(flattenConds(canonicalDefn));
   const pathsByEndState = getSimplePaths(
     createMachine({ predictableActionArguments: true, ...flattened })
   );
@@ -60,8 +61,12 @@ export const xstateToGherkin = (machine: AnyMachine): Array<GherkinFeature> => {
             );
         });
         return {
-          feature: features.size> 0 ? Array.from(features).join(" & ") : "Default Feature",
-          scenario: scenarios.length > 0 ? scenarios.join(" & ") : "Default Scenario",
+          feature:
+            features.size > 0
+              ? Array.from(features).join(" & ")
+              : "Default Feature",
+          scenario:
+            scenarios.length > 0 ? scenarios.join(" & ") : "Default Scenario",
           disambiguatingScenarios,
           steps,
         };
@@ -189,7 +194,7 @@ const valuesSortedByKey = <T>(m: Record<string, T>): Array<T> => {
   return keys.map((k) => m[k]);
 };
 
-const flattenConds = (state: AnyState): AnyState => {
+const flattenConds = (state: AnyState): Omit<AnyState, "transitions"> => {
   const { transitions, ...stateDefinition } = state;
 
   stateDefinition.on = Object.keys(stateDefinition.on).reduce((on, evtName) => {
@@ -198,7 +203,8 @@ const flattenConds = (state: AnyState): AnyState => {
       const { cond, ...unconditionalEvt } = evt;
       if (cond) {
         const condName = cond.name;
-        const newEvtName = `${evtName} with ${condName}`;
+        const newEvtName =
+          evtName.length > 0 ? `${evtName} with ${condName}` : condName;
         return {
           ...on,
           [newEvtName]: unconditionalEvt,
@@ -220,5 +226,33 @@ const flattenConds = (state: AnyState): AnyState => {
     {}
   );
 
-  return new StateNode(stateDefinition).definition;
+  return stateDefinition;
+};
+
+// we "fixup" state definitions because StateNode.definition returns null state transitions instead of always
+// transitions and that is deprecated. this is obviously wildly inefficient.
+const fixupStateDefinition = (
+  definition: Partial<AnyState>
+): AnyStateConfig => {
+  const { on, ...stateDefinition } = definition;
+  const stateConfig: AnyStateConfig = stateDefinition;
+  const onConfig = on ?? {};
+
+  const alwaysTransitions = onConfig[""];
+  if (alwaysTransitions) {
+    stateConfig.always = alwaysTransitions;
+    delete onConfig[""];
+  }
+  stateConfig.on = onConfig;
+
+  const states = stateConfig.states ?? {};
+  stateConfig.states = Object.keys(states).reduce(
+    (fixedStates, stateName) => ({
+      ...fixedStates,
+      [stateName]: fixupStateDefinition(states[stateName] as any as AnyState),
+    }),
+    {}
+  );
+
+  return stateConfig;
 };
