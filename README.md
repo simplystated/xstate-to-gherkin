@@ -2,6 +2,8 @@
 
 xstate-to-gherkin is a library and cli tool to generate [Gherkin](https://cucumber.io/docs/gherkin/reference) test scripts from an [xstate](https://github.com/statelyai/xstate) statechart.
 
+![Logo](./xstate-to-gherkin.png)
+
 # Quickstart
 
 **Check out a codesandbox demo [here](https://codesandbox.io/s/simply-stated-xstate-to-gherkin-shdqv2) to play with xstate-to-gherkin from your browser.**
