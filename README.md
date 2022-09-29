@@ -105,11 +105,11 @@ import { createMachine } from "xstate";
 
 const machine = createMachine(...);
 
-// scriptsByFilenames will contain a Map from filenames (e.g. my-feature.feature) to the gherkin content of the file.
+// scriptsByFilenames will contain a Map from filenames (e.g. my-feature.feature) to the Gherkin content of the file.
 const scriptsByFilenames = xstateToGherkinScripts(machine);
 ```
 
-# Why would you want to generate a gherkin script from a statechart?
+# Why would you want to generate a Gherkin script from a statechart?
 
 First off, it's important to note that you can describe any reactive system as a statechart.
 That means that you can certainly model anything you are trying to test with Gherkin as a statechart.
@@ -121,6 +121,11 @@ Suffice it to say that there are many more paths than there are states.
 If you try to explicitly list every path, you will have an enormous amount of work to do, especially if you add new edges near your initial state.
 
 So, we can take advantage of the power of the declarative nature of statecharts AND the fact that they are easy to use to model any system we might care about AND the fact that they allow us to do work in proportion to the number of states instead of the number of paths to let our computer do the hard work for us.
+
+# Simply Stated
+
+xstate-to-gherkin is a small tool built by [Simply Stated](https://www.simplystated.dev).
+At Simply Stated, our goal is to build all of the tooling you need to experience the full power of statecharts.
 
 # License
 
