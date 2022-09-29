@@ -1,6 +1,6 @@
 # xstate-to-gherkin &middot; [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/simplystated/xstate-to-gherkin/blob/main/LICENSE) [![npm version](https://img.shields.io/npm/v/@simplystated/xstate-to-gherkin.svg?style=flat)](https://www.npmjs.com/package/@simplystated/xstate-to-gherkin) [![CI](https://github.com/simplystated/xstate-to-gherkin/actions/workflows/ci.yaml/badge.svg)](https://github.com/simplystated/xstate-to-gherkin/actions/workflows/ci.yaml)
 
-xstate-to-gherkin is a library and cli tool to generate [Gherkin](https://cucumber.io/docs/gherkin/reference) test scripts from an [xstate](https://github.com/statelyai/xstate) statechart.
+xstate-to-gherkin is a library and cli tool to generate [Gherkin](https://cucumber.io/docs/gherkin/reference) test scripts from an [XState](https://github.com/statelyai/xstate) statechart.
 
 ![Logo](./xstate-to-gherkin.png)
 
@@ -8,7 +8,7 @@ xstate-to-gherkin is a library and cli tool to generate [Gherkin](https://cucumb
 
 **Check out a codesandbox demo [here](https://codesandbox.io/s/simply-stated-xstate-to-gherkin-shdqv2) to play with xstate-to-gherkin from your browser.**
 
-You'll need to have an xstate [machine definition](https://xstate.js.org/docs/guides/machines.html).
+You'll need to have an XState [machine definition](https://xstate.js.org/docs/guides/machines.html).
 xstate-to-gherkin requires you to annotate your machine with a few additional pieces of metadata.
 On any state you would like to make an assertion for, set `meta.gherkinAssert` to a string describing what should be true in that state.
 Optionally, on any state that is part of a feature, set `meta.gherkinFeature` to a string describing that feature.
