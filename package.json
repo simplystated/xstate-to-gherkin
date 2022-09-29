@@ -1,6 +1,6 @@
 {
   "name": "@simplystated/xstate-to-gherkin",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Generate gherkin test scripts from an xstate statechart",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
